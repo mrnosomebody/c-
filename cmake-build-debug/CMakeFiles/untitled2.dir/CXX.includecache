@@ -11,4 +11,10 @@ iostream
 -
 cmath
 -
+ostream
+-
+string
+-
+typeinfo
+-
 
