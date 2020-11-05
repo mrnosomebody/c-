@@ -50,9 +50,19 @@ private:
     }
 
     void transformation() {
+        int i=0;
         while (this->numerator != int(numerator) or this->denominator != int(denominator)) {
-            numerator *= 10;
-            denominator *= 10;
+            if (i>4) {
+                numerator = double(this->numerator);
+                denominator = double(this->denominator);
+                break;
+            }
+            else {
+                numerator *= 10;
+                denominator *= 10;
+                i++;
+            }
+
         }
     }
 
@@ -72,7 +82,7 @@ public:
     Rational(double numerator) {
         this->numerator = numerator;
         this->denominator = 1;
-        //transformation();
+        transformation();
         reduce();
     }
 
@@ -219,6 +229,23 @@ public:
     double toDouble() const {
         return (double) this->numerator / this->denominator;
     }
+    double GetNumerator() const noexcept {
+        return numerator;
+    }
+
+    double GetDenominator() const noexcept {
+        return denominator;
+    }
+
+    Rational SetNumerator(double numerator) noexcept {
+        this->numerator = numerator;
+        return *this;
+    }
+
+    Rational SetDenominator(double denominator) noexcept {
+        this->denominator = denominator;
+        return *this;
+    }
 };
 
 Rational power(Rational num, int deg) {
@@ -333,12 +360,14 @@ public:
         return this->imaginary;
     }
 
-    void SetReal(Rational &real) {
-        this->real = real;
+    Complex SetReal(Rational other) {
+        this->real = other;
+        return *this;
     }
 
-    void SetIm(Rational &imaginary) {
-        this->imaginary = imaginary;
+    Complex SetIm(Rational other) {
+        this->imaginary = other;
+        return *this;
     }
 
     Rational arg() {
@@ -393,7 +422,8 @@ int main() {
     Complex a(-1, -1);
     Complex b(-10.54, -3.6);
     Complex c(10.54, 3.6);
-    cout << b;
+
+    cout << b.arg();
 
 
 }
