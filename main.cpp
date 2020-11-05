@@ -3,6 +3,8 @@
 #include <ostream>
 #include <string>
 #include <typeinfo>
+#include <numeric>
+#include <algorithm>
 
 using namespace std;
 
@@ -26,11 +28,13 @@ T power(T num, int deg) {
 class Rational {
 
 private:
-    int numerator, denominator;
+    double numerator, denominator;
 
     void reduce() {
-        numerator = abs(numerator);
-        denominator = abs(denominator);
+        if (denominator < 0) {
+            numerator = -(numerator);
+            denominator = -denominator;
+        }
         int divider = gcd(numerator, denominator);
         numerator /= divider;
         denominator /= divider;
@@ -42,11 +46,19 @@ private:
             den = num;
             num = a;
         }
-        return den;
+        return abs(den);
     }
 
-    int lcm(int num, int den) { // НОК
-        return (num * den) / gcd(num, den);
+    void transformation() {
+        while (this->numerator != int(numerator) or this->denominator != int(denominator)) {
+            numerator *= 10;
+            denominator *= 10;
+        }
+    }
+
+    template<typename T>
+    T lcm(T a, T b) { // НОК
+        return (a * b) / gcd(a, b);
     }
 
 public:
@@ -57,12 +69,14 @@ public:
         this->denominator = 0;
     }
 
-    Rational(int numerator) {
+    Rational(double numerator) {
         this->numerator = numerator;
         this->denominator = 1;
+        //transformation();
+        reduce();
     }
 
-    Rational(int numerator, int denominator) {
+    Rational(double numerator, double denominator) {
         if (this->denominator == 0) {
             throw -1;
         }
@@ -73,6 +87,7 @@ public:
             this->numerator = -numerator;
             this->denominator = -denominator;
         }
+        transformation();
         reduce();
     }
 
@@ -80,23 +95,22 @@ public:
     //==================================================
     // Methods
 
-    Rational &operator=(const Rational &other) {
-        this->numerator = other.numerator;
-        this->denominator = other.denominator;
-        return *this;
-    }
+    Rational &operator=(const Rational &other) = default;
 
-    Rational &operator=(const int value) {
-        this->numerator = value;
-        this->denominator = 1;
-        return *this;
-    }
 
     Rational operator+(const Rational &other) {
-        this->numerator = this->numerator * other.denominator + other.numerator * this->denominator;
-        this->denominator = this->denominator * other.denominator;
-        reduce();
-        return Rational(numerator, denominator);
+        Rational newr;
+        if (denominator == other.denominator) {
+            newr.numerator = numerator + other.numerator;
+            newr.denominator = other.denominator;
+        } else {
+            int LcmNumber = lcm(denominator, other.denominator);
+            newr.numerator =
+                    (numerator * (LcmNumber / denominator)) + (other.numerator * (LcmNumber / other.denominator));
+            newr.denominator = LcmNumber;
+        }
+        newr.reduce();
+        return newr;
     }
 
     Rational &operator+=(const Rational &other) {
@@ -107,11 +121,20 @@ public:
     }
 
     Rational operator-(const Rational &other) {
-        this->numerator = this->numerator * other.denominator - other.numerator * this->denominator;
-        this->denominator = this->denominator * other.denominator;
-        reduce();
-        return Rational(numerator, denominator);
+        Rational newr;
+        if (denominator == other.denominator) {
+            newr.numerator = numerator - other.numerator;
+            newr.denominator = other.denominator;
+        } else {
+            int LcmNumber = lcm(denominator, other.denominator);
+            newr.numerator =
+                    (numerator * (LcmNumber / denominator)) - (other.numerator * (LcmNumber / other.denominator));
+            newr.denominator = LcmNumber;
+        }
+        newr.reduce();
+        return newr;
     }
+
 
     Rational &operator-=(const Rational &other) {
         this->numerator -= other.numerator;
@@ -121,10 +144,11 @@ public:
     }
 
     Rational operator*(const Rational &other) {
-        this->numerator = this->numerator * other.numerator;
-        this->denominator = this->denominator * other.denominator;
-        reduce();
-        return Rational(numerator, denominator);
+        Rational newr;
+        newr.numerator = this->numerator * other.numerator;
+        newr.denominator = this->denominator * other.denominator;
+        newr.reduce();
+        return newr;
     }
 
     Rational &operator*=(const Rational &other) {
@@ -134,10 +158,11 @@ public:
     }
 
     Rational operator/(const Rational &other) {
-        this->numerator = this->numerator * other.denominator;
-        this->denominator = this->denominator * other.numerator;
-        reduce();
-        return Rational(numerator, denominator);
+        Rational newr;
+        newr.numerator = this->numerator * other.denominator;
+        newr.denominator = this->denominator * other.numerator;
+        newr.reduce();
+        return newr;
     }
 
     Rational &operator/=(const Rational &other) {
@@ -146,17 +171,26 @@ public:
         return *this;
     }
 
-    Rational operator-() {
+    Rational operator-() const {
         return Rational(-this->numerator, denominator);
     }
 
-    bool operator==(const Rational &other) {    //==
+    bool operator==(const Rational &other) const {    //==
         return this->numerator == other.numerator and this->denominator == other.denominator;
     }
 
-    bool operator!=(const Rational &other) {    //!=
+    bool operator!=(const Rational &other) const {    //!=
         return !(this->numerator == other.numerator and this->denominator == other.denominator);
     }
+
+    bool operator>(Rational second) const {
+        return this->toDouble() > second.toDouble();
+    }
+
+    bool operator<(Rational second) const {
+        return this->toDouble() < second.toDouble();
+    }
+
 
     friend ostream &operator<<(ostream &os, const Rational &rational) {
         if (rational.numerator == 0)
@@ -169,9 +203,10 @@ public:
             return os << '(' << rational.numerator << "/" << rational.denominator << ')';
         if (rational.numerator < 0 and rational.denominator < 0)
             return os << '(' << -rational.numerator << "/" << -rational.denominator << ')';
-        if ((rational.numerator > 0 and rational.denominator < 0) or
-            (rational.numerator < 0 and rational.denominator > 0))
-            return os << '(' << -rational.numerator << "/" << rational.denominator << ')';
+        if (rational.numerator > 0 and rational.denominator < 0)
+            return os << '(' << -rational.numerator << "/" << -rational.denominator << ')';
+        if (rational.numerator < 0 and rational.denominator > 0)
+            return os << '(' << rational.numerator << "/" << rational.denominator << ')';
     }
 
     Rational stepen(int deg) {
@@ -180,12 +215,32 @@ public:
         reduce();
         return *this;
     }
+
+    double toDouble() const {
+        return (double) this->numerator / this->denominator;
+    }
 };
+
+Rational power(Rational num, int deg) {
+    Rational result = 1;
+    num = num.toDouble();
+    while (deg) {
+        if (deg % 2 == 0) {
+            deg /= 2;
+            num *= num;
+        } else {
+            deg--;
+            result *= num;
+        }
+    }
+
+    return result;
+}
 
 
 class Complex {
 private:
-    double real, imaginary;
+    Rational real, imaginary;
 
 public:
 
@@ -196,13 +251,13 @@ public:
         this->imaginary = 0;
     }
 
-    Complex(double real) {
+    Complex(const Rational &real) {
         this->real = real;
         this->imaginary = 0;
     }
 
 
-    Complex(double real, double imaginary) {
+    Complex(const Rational &real, const Rational &imaginary) {
         this->real = real;
         this->imaginary = imaginary;
     }
@@ -228,8 +283,7 @@ public:
     }
 
     Complex &operator+=(const Complex &other) {  //+=
-        this->real += other.real;
-        this->imaginary += other.imaginary;
+        *this = *this + other;
         return *this;
     }
 
@@ -238,14 +292,15 @@ public:
     }
 
     Complex &operator-=(const Complex &other) {  //-=
-        this->real -= other.real;
-        this->imaginary -= other.imaginary;
+        *this = *this - other;
         return *this;
     }
 
     Complex operator*(const Complex &other) {  //*
-        return Complex(this->real * other.real - imaginary * other.imaginary,
-                       real * other.imaginary + imaginary * other.real);
+        Complex result;
+        result.real = real * other.real - imaginary * other.imaginary;
+        result.imaginary = real * other.imaginary + imaginary * other.real;
+        return result;
     }
 
     Complex &operator*=(const Complex &other) {  //*=
@@ -254,14 +309,14 @@ public:
 
     Complex operator/(const Complex &other) {  // /
         Complex result;
-        double sqr = other.real * other.real + other.imaginary * other.imaginary;
+        auto sqr = power(other.real, 2) + power(other.imaginary, 2);
         result.real = (this->real * other.real + this->imaginary * other.imaginary) / sqr;
         result.imaginary = (this->imaginary * other.real - this->real * other.imaginary) / sqr;
         return result;
     }
 
     Complex &operator/=(const Complex &other) {  // /=
-        return *this = *this * other;
+        return *this = *this / other;
     }
 
     Complex operator-() {
@@ -270,50 +325,54 @@ public:
 //============================================
 // Methods
 
-    double GetReal() {
+    Rational &GetReal() {
         return this->real;
     }
 
-    double GetIm() {
+    Rational &GetIm() {
         return this->imaginary;
     }
 
-    void SetReal(double real) {
+    void SetReal(Rational &real) {
         this->real = real;
     }
 
-    void SetIm(double imaginary) {
+    void SetIm(Rational &imaginary) {
         this->imaginary = imaginary;
     }
 
-    double arg() {
+    Rational arg() {
         double pi = 3.14;
-        double argument = 0;
         if (this->real == 0 and this->imaginary == 0)
             return 0;
         if (this->real > 0)
-            return atan(this->imaginary / this->real);
+            return atan((this->imaginary / this->real).toDouble());
         if (this->real < 0 and this->imaginary > 0)
-            return pi + atan(this->imaginary / this->real);
+            return pi + atan((this->imaginary / this->real).toDouble());
         if (this->real < 0 and this->imaginary < 0)
-            return -pi + atan(this->imaginary / this->real);
+            return -pi + atan((this->imaginary / this->real).toDouble());
         if (this->real == 0 and this->imaginary > 0)
             return pi / 2;
         else return -pi / 2;
     }
 
-    double abs() {
-        return sqrt(this->real * this->real + this->imaginary * this->imaginary);
+    Rational abs() {
+        Complex newr;
+        newr.real = this->real * this->real;
+        newr.imaginary = this->imaginary * this->imaginary;
+        return sqrt((newr.real+newr.imaginary).toDouble());
     }
 
-    friend double power(double num, int deg);
+    friend Rational power(Rational num, int deg);
 
     Complex stepen(int deg) {
         Complex result;
-        result.real = power(this->abs(), deg) * cos(this->arg() * deg);
-        result.imaginary = power(this->abs(), deg) * sin(this->arg() * deg);
+        Rational temp = deg;
+        result.real = power(this->abs(), deg) * cos((this->arg() * temp).toDouble());
+        result.imaginary = power(this->abs(), deg) * sin((this->arg() * temp).toDouble());
         return result;
     }
+
 
     friend ostream &operator<<(ostream &os, const Complex &complex) {
         if (complex.real == 0)
@@ -324,15 +383,17 @@ public:
             return os << complex.real << " + " << complex.imaginary << "i";
         if (complex.real == 0 and complex.imaginary == 0)
             return os << 0;
-        return os << complex.real << " - " << fabs(complex.imaginary) << "i";
+        return os << complex.real << " - " << -(complex.imaginary) << "i";
     }
 
 
 };
 
 int main() {
-    Rational a(5, 7);
-    Rational b(1.54, 3.6);
+    Complex a(-1, -1);
+    Complex b(-10.54, -3.6);
+    Complex c(10.54, 3.6);
     cout << b;
+
 
 }

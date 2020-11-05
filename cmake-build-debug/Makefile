@@ -142,6 +142,46 @@ untitled2/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled2.dir\build.make CMakeFiles/untitled2.dir/build
 .PHONY : untitled2/fast
 
+#=============================================================================
+# Target rules for targets named new
+
+# Build rule for target.
+new: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 new
+.PHONY : new
+
+# fast build rule for target.
+new/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/build
+.PHONY : new/fast
+
+Rational.obj: Rational.cpp.obj
+
+.PHONY : Rational.obj
+
+# target to build an object file
+Rational.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/Rational.cpp.obj
+.PHONY : Rational.cpp.obj
+
+Rational.i: Rational.cpp.i
+
+.PHONY : Rational.i
+
+# target to preprocess a source file
+Rational.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/Rational.cpp.i
+.PHONY : Rational.cpp.i
+
+Rational.s: Rational.cpp.s
+
+.PHONY : Rational.s
+
+# target to generate assembly for a file
+Rational.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/Rational.cpp.s
+.PHONY : Rational.cpp.s
+
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -177,7 +217,11 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
+	@echo ... new
 	@echo ... untitled2
+	@echo ... Rational.obj
+	@echo ... Rational.i
+	@echo ... Rational.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
