@@ -129,8 +129,17 @@
 		<Unit filename="C:/Users/mrnos/CLionProjects/untitled2/Rational.cpp">
 			<Option target="new"/>
 		</Unit>
+		<Unit filename="C:/Users/mrnos/CLionProjects/untitled2/complex.cpp">
+			<Option target="new"/>
+		</Unit>
+		<Unit filename="C:/Users/mrnos/CLionProjects/untitled2/complex.h">
+			<Option target="new"/>
+		</Unit>
 		<Unit filename="C:/Users/mrnos/CLionProjects/untitled2/main.cpp">
 			<Option target="untitled2"/>
+		</Unit>
+		<Unit filename="C:/Users/mrnos/CLionProjects/untitled2/power.cpp">
+			<Option target="new"/>
 		</Unit>
 		<Unit filename="C:/Users/mrnos/CLionProjects/untitled2/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>

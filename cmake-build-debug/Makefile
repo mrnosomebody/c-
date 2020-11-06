@@ -182,6 +182,33 @@ Rational.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/Rational.cpp.s
 .PHONY : Rational.cpp.s
 
+complex.obj: complex.cpp.obj
+
+.PHONY : complex.obj
+
+# target to build an object file
+complex.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/complex.cpp.obj
+.PHONY : complex.cpp.obj
+
+complex.i: complex.cpp.i
+
+.PHONY : complex.i
+
+# target to preprocess a source file
+complex.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/complex.cpp.i
+.PHONY : complex.cpp.i
+
+complex.s: complex.cpp.s
+
+.PHONY : complex.s
+
+# target to generate assembly for a file
+complex.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/complex.cpp.s
+.PHONY : complex.cpp.s
+
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -209,6 +236,33 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\untitled2.dir\build.make CMakeFiles/untitled2.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+power.obj: power.cpp.obj
+
+.PHONY : power.obj
+
+# target to build an object file
+power.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/power.cpp.obj
+.PHONY : power.cpp.obj
+
+power.i: power.cpp.i
+
+.PHONY : power.i
+
+# target to preprocess a source file
+power.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/power.cpp.i
+.PHONY : power.cpp.i
+
+power.s: power.cpp.s
+
+.PHONY : power.s
+
+# target to generate assembly for a file
+power.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\new.dir\build.make CMakeFiles/new.dir/power.cpp.s
+.PHONY : power.cpp.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -222,9 +276,15 @@ help:
 	@echo ... Rational.obj
 	@echo ... Rational.i
 	@echo ... Rational.s
+	@echo ... complex.obj
+	@echo ... complex.i
+	@echo ... complex.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... power.obj
+	@echo ... power.i
+	@echo ... power.s
 .PHONY : help
 
 

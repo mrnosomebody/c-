@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/new.dir/Rational.cpp.obj"
+  "CMakeFiles/new.dir/complex.cpp.obj"
+  "CMakeFiles/new.dir/power.cpp.obj"
   "libnew.dll.a"
   "new.exe"
   "new.exe.manifest"

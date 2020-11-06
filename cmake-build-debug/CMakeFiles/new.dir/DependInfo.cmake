@@ -5,6 +5,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "C:/Users/mrnos/CLionProjects/untitled2/Rational.cpp" "C:/Users/mrnos/CLionProjects/untitled2/cmake-build-debug/CMakeFiles/new.dir/Rational.cpp.obj"
+  "C:/Users/mrnos/CLionProjects/untitled2/complex.cpp" "C:/Users/mrnos/CLionProjects/untitled2/cmake-build-debug/CMakeFiles/new.dir/complex.cpp.obj"
+  "C:/Users/mrnos/CLionProjects/untitled2/power.cpp" "C:/Users/mrnos/CLionProjects/untitled2/cmake-build-debug/CMakeFiles/new.dir/power.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
