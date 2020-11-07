@@ -3,7 +3,12 @@
 #include <ostream>
 #include <string>
 
+#define CATCH_CONFIG_MAIN
+
+#include "catch.hpp"
+
 using namespace std;
+
 
 template<typename T>
 T power(T num, int deg) {
@@ -50,7 +55,7 @@ private:
         return (a * b) / gcd(a, b);
     }
 
-    static constexpr int eps = 10000;
+    static constexpr int eps = 1000;
 
 public:
     //========================================
@@ -88,12 +93,6 @@ public:
         return newr;
     }
 
-    Rational &operator+=(const Rational &other) {
-        this->numerator += other.numerator;
-        this->denominator += other.denominator;
-        reduce();
-        return *this;
-    }
 
     Rational operator-(const Rational &other) const {
         Rational newr;
@@ -110,13 +109,6 @@ public:
         return newr;
     }
 
-
-    Rational &operator-=(const Rational &other) {
-        this->numerator -= other.numerator;
-        this->denominator -= other.denominator;
-        reduce();
-        return *this;
-    }
 
     Rational operator*(const Rational &other) const {
         Rational newr;
@@ -231,7 +223,6 @@ public:
 
     }
 
-
     Complex(const Rational &real, const Rational &imaginary) {
         this->real = real;
         this->imaginary = imaginary;
@@ -248,6 +239,7 @@ public:
     }
 
     Complex &operator=(const Complex &other) = default;
+
 
     Complex operator+(const Complex &other) const {   //+
         return Complex(this->real + other.real, this->imaginary + other.imaginary);
@@ -356,17 +348,225 @@ public:
             return os << 0;
         return os << complex.real << " - " << -(complex.imaginary) << "i";
     }
-
-
 };
 
-int main() {
-    const Complex a(-16.8, 12.756);
-    Complex b(89793782, 4321);
-    const Complex c(10.54, 3.6);
 
-    cout << power(a, 2).GetReal().toDouble();
+TEST_CASE("Construct") {
+    SECTION("Rational") {
+        const Rational a(3.2);
+        const Rational Num(5, 10);
+        REQUIRE(Num.GetNumerator() == 1);
+        REQUIRE(Num.GetDenominator() == 2);
+        REQUIRE(a.GetNumerator() == 16);
+        REQUIRE(a.GetDenominator() == 5);
+    }
+    SECTION("Complex") {
+        const Rational FirstNum(5, 10);
+        const Rational NumI(3, 4);
+        const Complex Num(FirstNum, NumI);
+        const Rational FirstNum1;
+        const Rational NumI1;
+        const Complex Num1;
+        const Complex Num2(Num);
+        REQUIRE(Num.GetReal() == FirstNum);
+        REQUIRE(Num.GetIm() == NumI);
+        REQUIRE(Num1.GetReal() == FirstNum1);
+        REQUIRE(Num1.GetIm() == NumI1);
+        REQUIRE(Num2.GetReal() == FirstNum);
+        REQUIRE(Num2.GetIm() == NumI);
+    }
+}
+TEST_CASE("Setters") {
+    const Rational FirstNum(5, 10);
+    const Rational NumI(3, 4);
+    Complex Num;
+    Num.SetReal(FirstNum);
+    Num.SetIm(NumI);
+    REQUIRE(Num.GetReal() == FirstNum);
+    REQUIRE(Num.GetIm() == NumI);
+}
 
+TEST_CASE("Complex = Complex") {
+    Complex a(12.2, 8);
+    Complex b(12.2, 8);
+    a = b;
+    REQUIRE(a == b);
+}
+
+TEST_CASE("Complex == Complex") {
+    Complex a(1221, 0);
+    Complex b(1221, 0);
+    REQUIRE(a == b);
+}
+
+TEST_CASE("Complex != Complex") {
+    Complex a(12.2, 8);
+    Complex b(22, 12);
+    REQUIRE(a != b);
+}
+
+TEST_CASE("Complex + Complex") {
+    Complex a(12.2, 8);
+    Complex b(22, 8);
+    Complex c = a + b;
+    REQUIRE(c.GetReal().toDouble()==Approx(34.2).epsilon(0.001));
+    REQUIRE(c.GetIm()==16);
+}
+
+TEST_CASE("Complex - Complex") {
+    Complex a(4.2, -33);
+    Complex b(212, 0.2);
+    Complex c = a - b;
+    REQUIRE(c.GetReal().toDouble()==Approx(-207.79).epsilon(0.001));
+    REQUIRE(c.GetIm().toDouble()==Approx(-33.2));
+}
+TEST_CASE("Complex * Complex") {
+    Complex a(12.2, 8);
+    Complex b(22, 8);
+    Complex c = a * b;
+    REQUIRE(c.GetReal().toDouble()==Approx(204.378));
+    REQUIRE(c.GetIm().toDouble()==Approx(273.59));
+}
+
+//TEST_CASE("Complex / Complex") {
+//    Complex a(-122, 0.9);
+//    Complex b(22.22, 8.87);
+//    Complex c = a / b;
+//    REQUIRE(c.GetReal().toDouble()==Approx(-4.72192));
+//    REQUIRE(c.GetIm().toDouble()==1);
+//}
+TEST_CASE("Complex += Complex") {
+    Complex a(12.2, 8);
+    Complex b(22, 8);
+    Complex c = a + b;
+    a+=b;
+    REQUIRE(a.GetReal()==c.GetReal());
+    REQUIRE(a.GetIm()==c.GetIm());
+}
+
+TEST_CASE("Complex -= Complex") {
+    Complex a(1872, 78.87);
+    Complex b(-2.862, 8);
+    Complex c = a - b;
+    a-=b;
+    REQUIRE(a.GetReal()==c.GetReal());
+    REQUIRE(a.GetIm()==c.GetIm());
+}
+TEST_CASE("Complex *= Complex") {
+    Complex a(-12.2, 34);
+    Complex b(265.434, 0);
+    Complex c = a * b;
+    a*=b;
+    REQUIRE(a.GetReal()==c.GetReal());
+    REQUIRE(a.GetIm()==c.GetIm());
+}
+
+TEST_CASE("abs"){
+    Complex a(5,3.7);
+    REQUIRE(a.abs().toDouble()==Approx(6.22012).epsilon(0.001));
+}
+
+TEST_CASE("arg"){
+    Complex a(5,3.7);
+    REQUIRE(a.arg().toDouble()==Approx(0.63707).epsilon(0.001));
+}
+
+TEST_CASE("power"){
+    SECTION("Rational"){
+        Rational a(16,17);
+        REQUIRE(power(a,2).toDouble()==Approx(0.8858).epsilon(0.001));
+    }
+    SECTION("Complex") {
+        Complex a(5,3.7);
+        a=power(a,4);
+        REQUIRE(a.GetReal().toDouble()==Approx(-1241.0838).epsilon(0.001));
+        REQUIRE(a.GetIm().toDouble()==Approx(836.9399).epsilon(0.001));
+    }
 
 }
+
+TEST_CASE("Rational == Rational") {
+    Rational a(1221, 23);
+    Rational b(1221, 23);
+    REQUIRE(a == b);
+}
+
+TEST_CASE("Rational != Rational") {
+    Rational a(1221, 23);
+    Rational b(1221, 2.3);
+    REQUIRE(a != b);
+}
+
+TEST_CASE("Rational = Rational") {
+    Rational a(1221, 23);
+    Rational b(122.1, 2.3);
+    a=b;
+    REQUIRE(a == b);
+}
+
+TEST_CASE("Rational + Rational") {
+    Rational a(1221, 23);
+    Rational b(122, 2);
+    Rational c=a+b;
+    Rational n (2.45);
+    Rational x= b+n;
+    REQUIRE(c.GetNumerator()==2624);
+    REQUIRE(c.GetDenominator()==23);
+    REQUIRE(x.GetNumerator()==1269);
+    REQUIRE(x.GetDenominator()==20);
+}
+
+TEST_CASE("Rational - Rational") {
+    Rational a(21, 3);
+    Rational b(12, 9);
+    Rational c=a-b;
+    Rational n (24.5);
+    Rational x= b-n;
+    REQUIRE(c.GetNumerator()==17);
+    REQUIRE(c.GetDenominator()==3);
+    REQUIRE(x.GetNumerator()==-139);
+    REQUIRE(x.GetDenominator()==6);
+}
+
+TEST_CASE("Rational * Rational") {
+    Rational a(21, 3);
+    Rational b(12, -9);
+    Rational c=a*b;
+    Rational n (24.5);
+    Rational x= b*n;
+    REQUIRE(c.GetNumerator()==-28);
+    REQUIRE(c.GetDenominator()==3);
+    REQUIRE(x.GetNumerator()==-98);
+    REQUIRE(x.GetDenominator()==3);
+}
+
+TEST_CASE("Rational / Rational") {
+    Rational a(14, 21);
+    Rational b(-15, 7);
+    Rational c=a/b;
+    Rational n (24.5);
+    Rational x= b/n;
+    REQUIRE(c.GetNumerator()==-14);
+    REQUIRE(c.GetDenominator()==45);
+    REQUIRE(x.GetNumerator()==-30);
+    REQUIRE(x.GetDenominator()==343);
+}
+
+//TEST_CASE("Complex /= Complex") {
+//    Complex a(12.2, 8);
+//    Complex b(22, 8);
+//    Complex c = a / b;
+//    a/=b;
+//    REQUIRE(a.GetReal()==c.GetReal());
+//    REQUIRE(a.GetIm()==c.GetIm());
+//}
+
+
+//int main() {
+//    const Rational a(16,17);
+//    cout<<a;
+//    cout<<power(a,2);
+//
+//
+//}
 
