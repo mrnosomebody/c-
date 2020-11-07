@@ -7,18 +7,14 @@ using namespace std;
 
 template<typename T>
 T power(T num, int deg) {
-    T result(static_cast<int>(1)) ;
-    int i = 0;
+    T result(static_cast<int>(1));
     while (deg) {
-        if (deg % 2 == 0) {
-            deg /= 2;
-            num *= num;
-        } else {
-            deg--;
+        num *= num;
+        deg /= 2;
+        if (deg % 2 == 1) {
             result *= num;
-
+            deg--;
         }
-        i++;
     }
     return result;
 }
@@ -27,7 +23,7 @@ T power(T num, int deg) {
 class Rational {
 
 private:
-    double numerator, denominator;
+    int numerator, denominator;
 
     void reduce() {
         if (denominator < 0) {
@@ -66,8 +62,7 @@ public:
     }
 
 
-
-    Rational(int numerator=0, int denominator=1) : numerator(numerator), denominator(denominator) {
+    Rational(int numerator = 0, int denominator = 1) : numerator(numerator), denominator(denominator) {
         reduce();
     }
 
@@ -198,7 +193,7 @@ public:
     }
 
     double toDouble() const {
-        return static_cast<double> (this->numerator / this->denominator);
+        return (static_cast<double>(this->numerator ) / static_cast<double>(this->denominator));
     }
 
     double GetNumerator() const noexcept {
@@ -309,6 +304,14 @@ public:
         return this->imaginary;
     }
 
+    const Rational &GetReal() const {
+        return this->real;
+    }
+
+    const Rational &GetIm() const {
+        return this->imaginary;
+    }
+
     Complex SetReal(Rational other) {
         this->real = other;
         return *this;
@@ -342,7 +345,6 @@ public:
     }
 
 
-
     friend ostream &operator<<(ostream &os, const Complex &complex) {
         if (complex.real == Rational())
             return os << complex.imaginary << "i";
@@ -363,7 +365,8 @@ int main() {
     Complex b(89793782, 4321);
     const Complex c(10.54, 3.6);
 
-    cout << power(a,2).GetReal().toDouble();
+    cout << power(a, 2).GetReal().toDouble();
 
 
 }
+
